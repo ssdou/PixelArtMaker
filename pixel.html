@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="color">
+                    <input type="color" id="colorSelector">
+                </div>    
+                <button id="clear">clear</button>
+                <div id="toolbar">
+                    <button id="paintbrush">paintbrush</button>
+                    <button id="eraser">eraser</button>
+                    <button id="bucket">bucket</button>
+                    <button id="dropper">dropper</button>
+                </div>
+                
+            </header>
+            <div id="colorSaver" >
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+                <div class="colorSquare" style='background-color: rgb(255, 255, 255)'></div>
+            </div>
+            <div id="main">
+                <table id="pixelGrid">
+    
+                </table>
+            </div>
+        </div>
+        
+    </body>
+    <script src="app.js"></script>
+</html>
