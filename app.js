@@ -54,7 +54,6 @@ pixelGrid.addEventListener('mousedown', (evt)=>{
             break;
         case 'bucket':
             let row = evt.target.getAttribute('row');
-            console.log(row);
             let col = evt.target.getAttribute('col');
             bucketFill(row, col, gridArray[row][col].style.backgroundColor);
             break;
@@ -156,7 +155,6 @@ bucket.addEventListener('click', ()=>{
 //redo with css grid? Make one dom call to change all pixels. 
     //make each pixel a seperate grid area, turn canvas into template string, then update DOM in one go?
 const bucketFill = (row, col, oldColor)=>{
-    console.log(`r:${row} c:${col}`)
     if(row >= width || row < 0 || col >= height || col < 0){
         return;
     }
@@ -171,9 +169,9 @@ const bucketFill = (row, col, oldColor)=>{
    bucketFill(parseInt(row)-1, col, oldColor);
    bucketFill(row, parseInt(col)-1, oldColor);
 }   
-initGrid(width,height);
 
-let colorSavers = document.querySelector('#colorSaver');
+
+let colorSaver = document.querySelector('#colorSaver');
 /*colorSavers.forEach((colorSaver)=>{
 
 });*/
@@ -183,7 +181,13 @@ colorSaver.addEventListener('click', (evt)=>{
         selectedColor = evt.target.style.backgroundColor;
         colorSelector.value = rgbToHex(evt.target.style.backgroundColor);
         activeTool = 'paintbrush';
-    }else{
+    }else if(activeTool === 'eraser'){
+        evt.target.style.backgroundColor = 'rgb(255, 255, 255)';
+    }
+    else{
         evt.target.style.backgroundColor = selectedColor;
     }
 });
+
+//initialize canvas grid
+initGrid(width,height);
