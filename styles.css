@@ -49,3 +49,8 @@ td{
     border-collapse: collapse;
     background-color: rgb(255, 255, 255);
 }
+
+#pixelGrid{
+    width: 100%;
+    height: 100%;
+}

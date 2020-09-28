@@ -1,4 +1,5 @@
 let pixelGrid = document.querySelector('#pixelGrid');
+let gridContainer = document.querySelector('#gridContainer');
 
 let defaultPaint = 'rgb(0, 0, 0)';
 let defaultCanvas = 'rgb(255,255,255)';
@@ -56,7 +57,8 @@ const setColor = (item, color)=>{
 
 //Three following event listeners listens for clicks/drags. mouseFlag variable is used to check for user dragging mouse colors
 let mouseFlag = false;
-pixelGrid.addEventListener('mousedown', (evt)=>{
+
+gridContainer.addEventListener('mousedown', (evt)=>{
     switch(activeTool){
         case 'eraser':
             mouseFlag = true;
@@ -81,7 +83,7 @@ pixelGrid.addEventListener('mousedown', (evt)=>{
     
 });
 
-pixelGrid.addEventListener('mouseover', (evt)=>{
+gridContainer.addEventListener('mouseover', (evt)=>{
     if(mouseFlag && activeTool === 'paintbrush'){
         setColor(evt.target, selectedColor);
     }else if(mouseFlag && activeTool === 'eraser'){
@@ -91,7 +93,7 @@ pixelGrid.addEventListener('mouseover', (evt)=>{
     }
 })
 
-pixelGrid.addEventListener('mouseup', ()=>{
+gridContainer.addEventListener('mouseup', ()=>{
     mouseFlag = false;
 });
 
@@ -199,10 +201,10 @@ const fill = (row, col, oldColor) => {
     //pixelGrid.append(docFrag);
     //bucketFill(row, col, oldColor, docFrag);
     bucketFill(row, col, oldColor, docFrag);
-    let main = document.querySelector('#main');
+    //let main = document.querySelector('#main');
     //console.log(container.innerHTML);
     //main.innerHTML = container.innerHTML;
-    main.replaceChild(docFrag, pixelGrid);
+    gridContainer.replaceChild(docFrag, pixelGrid);
     //resets global pixelGrid variable to what was in the document fragment. This is necessary for other functions to work
     pixelGrid = document.querySelector('#pixelGrid');
 }
