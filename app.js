@@ -13,6 +13,7 @@ let height = 25;
 
 
 //Initializes canvas and a '2D' array to represent our pixel grid. 
+/*
 let gridArray = [];
 const initGrid = (width, height)=>{
     for(let row=0; row<width; row++){
@@ -31,12 +32,26 @@ const initGrid = (width, height)=>{
         }
     }
 }
-
+*/
+const initGrid = (width, height)=>{
+    let docFrag = new DocumentFragment();
+    for(let row = 0; row<height; row++){
+        let tr = document.createElement('tr');
+        docFrag.append(tr);
+        for(let col = 0; col<width; col++){
+            let td = document.createElement('td');
+            td.setAttribute('row', row);
+            td.setAttribute('col', col);
+            td.style.backgroundColor = canvasColor;
+            tr.append(td);
+        }
+    }
+    pixelGrid.append(docFrag);
+}
 
 //sets the background color of the specified item
 const setColor = (item, color)=>{
     item.style.backgroundColor = color;
-    //item.setAttribute('filled', true);
 }
 
 //Three following event listeners listens for clicks/drags. mouseFlag variable is used to check for user dragging mouse colors
@@ -46,7 +61,6 @@ pixelGrid.addEventListener('mousedown', (evt)=>{
         case 'eraser':
             mouseFlag = true;
             setColor(evt.target, canvasColor);
-           // evt.target.setAttribute('filled', false);
             break;
         case 'paintbrush':
             mouseFlag = true;
@@ -55,12 +69,13 @@ pixelGrid.addEventListener('mousedown', (evt)=>{
         case 'bucket':
             let row = evt.target.getAttribute('row');
             let col = evt.target.getAttribute('col');
-            bucketFill(row, col, gridArray[row][col].style.backgroundColor);
+            fill(row, col, evt.target.style.backgroundColor);
             break;
         case 'dropper':
             let color = evt.target.style.backgroundColor;
             selectedColor = color;
             colorSelector.value = rgbToHex(color);
+            activeTool = 'paintbrush';
             break;
      }
     
@@ -69,10 +84,8 @@ pixelGrid.addEventListener('mousedown', (evt)=>{
 pixelGrid.addEventListener('mouseover', (evt)=>{
     if(mouseFlag && activeTool === 'paintbrush'){
         setColor(evt.target, selectedColor);
-     //   evt.target.setAttribute('filled', true);
     }else if(mouseFlag && activeTool === 'eraser'){
         setColor(evt.target, canvasColor);
-      //  evt.target.setAttribute('filled', false);
         console.log(evt.target);
         console.log('erased');
     }
@@ -104,7 +117,6 @@ clearButton.addEventListener('click', ()=>{
        let colArray = row.children;
        for(let col of colArray){
            col.style.backgroundColor = canvasColor;
-          // col.setAttribute('filled', false);
        }
    }
    activeTool = 'paintbrush';
@@ -150,7 +162,7 @@ let bucket = document.querySelector('#bucket');
 bucket.addEventListener('click', ()=>{
     activeTool = 'bucket';
 });
-
+/*
 //extremely expensive. Optimize!!!
 //redo with css grid? Make one dom call to change all pixels. 
     //make each pixel a seperate grid area, turn canvas into template string, then update DOM in one go?
@@ -169,7 +181,52 @@ const bucketFill = (row, col, oldColor)=>{
    bucketFill(parseInt(row)-1, col, oldColor);
    bucketFill(row, parseInt(col)-1, oldColor);
 }   
+*/
 
+//add to mouseEvent listener later
+const fill = (row, col, oldColor) => {
+    
+    let docFrag = new DocumentFragment();
+    let container = document.createElement('div');
+    //let grid = document.querySelector('#main');
+    //container.innerHTML = grid.innerHTML;
+    //container.append(pixelGrid);
+    //console.log(pixelGrid);
+    //console.log(container.innerHTML);
+    
+    docFrag.append(pixelGrid.cloneNode(true));
+    //console.log(docFrag);
+    //pixelGrid.append(docFrag);
+    //bucketFill(row, col, oldColor, docFrag);
+    bucketFill(row, col, oldColor, docFrag);
+    let main = document.querySelector('#main');
+    //console.log(container.innerHTML);
+    //main.innerHTML = container.innerHTML;
+    main.replaceChild(docFrag, pixelGrid);
+    //resets global pixelGrid variable to what was in the document fragment. This is necessary for other functions to work
+    pixelGrid = document.querySelector('#pixelGrid');
+}
+
+//nth child
+const bucketFill = (row, col, oldColor, docFrag)=>{
+    //console.log(`row:${row}, col${col}`);
+    if(row < 0 || col < 0 || row >= height || col >= width){
+        return;
+    }
+    let currentPixel = docFrag.querySelector(`[row="${row}"][col="${col}"]`);
+    let currentColor = currentPixel.style.backgroundColor;
+    //if the color of the current pixel matches the selected color, don't change it
+    //only change if the color is the same as the color of the first selected original pixel
+    if(currentColor != oldColor || currentColor === selectedColor){
+        return;
+   }
+   currentPixel.style.backgroundColor = selectedColor;
+   //make recursive calls in 4 directions
+   bucketFill(parseInt(row)+1, col, oldColor, docFrag);
+   bucketFill(row, parseInt(col)+1, oldColor, docFrag);
+   bucketFill(parseInt(row)-1, col, oldColor, docFrag);
+   bucketFill(row, parseInt(col)-1, oldColor, docFrag);
+}
 
 let colorSaver = document.querySelector('#colorSaver');
 /*colorSavers.forEach((colorSaver)=>{
