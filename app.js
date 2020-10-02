@@ -1,39 +1,17 @@
 let pixelGrid = document.querySelector('#pixelGrid');
 let gridContainer = document.querySelector('#gridContainer');
 
-let defaultPaint = 'rgb(0, 0, 0)';
-let defaultCanvas = 'rgb(255,255,255)';
+let defaultPaint = 'rgb(0, 0, 0)'; //default paint color is black
+let defaultCanvas = 'rgb(255,255,255)';//default canvas color is white
 let selectedColor = defaultPaint;
 
 let canvasColor = defaultCanvas;
 
 let activeTool = 'paintbrush'; //active tool is paintbrush by default
 
-let width = 25;
-let height = 25;
+let width = 30;
+let height = 30;
 
-
-//Initializes canvas and a '2D' array to represent our pixel grid. 
-/*
-let gridArray = [];
-const initGrid = (width, height)=>{
-    for(let row=0; row<width; row++){
-        let tr = document.createElement('tr');
-        pixelGrid.append(tr);
-        gridArray[row] = [];
-        //for each td value, we will save its coordinate as an attribute to work with later
-        for(let col=0; col<height; col++){
-            let td = document.createElement('td');
-            td.setAttribute('row', row);
-            td.setAttribute('col', col);
-           // td.setAttribute('filled', false);
-            td.style.backgroundColor = canvasColor;
-            tr.append(td);
-            gridArray[row][col] = td;
-        }
-    }
-}
-*/
 const initGrid = (width, height)=>{
     let docFrag = new DocumentFragment();
     for(let row = 0; row<height; row++){
@@ -164,54 +142,23 @@ let bucket = document.querySelector('#bucket');
 bucket.addEventListener('click', ()=>{
     activeTool = 'bucket';
 });
-/*
-//extremely expensive. Optimize!!!
-//redo with css grid? Make one dom call to change all pixels. 
-    //make each pixel a seperate grid area, turn canvas into template string, then update DOM in one go?
-const bucketFill = (row, col, oldColor)=>{
-    if(row >= width || row < 0 || col >= height || col < 0){
-        return;
-    }
-    let currentColor = gridArray[row][col].style.backgroundColor;
-    if(oldColor != currentColor || currentColor == selectedColor){
-        return; 
-    }
-    gridArray[row][col].style.backgroundColor = selectedColor;
-   
-   bucketFill(parseInt(row)+1, col, oldColor);
-   bucketFill(row, parseInt(col)+1, oldColor);
-   bucketFill(parseInt(row)-1, col, oldColor);
-   bucketFill(row, parseInt(col)-1, oldColor);
-}   
-*/
 
 //add to mouseEvent listener later
 const fill = (row, col, oldColor) => {
     
     let docFrag = new DocumentFragment();
-    let container = document.createElement('div');
-    //let grid = document.querySelector('#main');
-    //container.innerHTML = grid.innerHTML;
-    //container.append(pixelGrid);
-    //console.log(pixelGrid);
-    //console.log(container.innerHTML);
+    
     
     docFrag.append(pixelGrid.cloneNode(true));
-    //console.log(docFrag);
-    //pixelGrid.append(docFrag);
-    //bucketFill(row, col, oldColor, docFrag);
+   
     bucketFill(row, col, oldColor, docFrag);
-    //let main = document.querySelector('#main');
-    //console.log(container.innerHTML);
-    //main.innerHTML = container.innerHTML;
+    
     gridContainer.replaceChild(docFrag, pixelGrid);
-    //resets global pixelGrid variable to what was in the document fragment. This is necessary for other functions to work
     pixelGrid = document.querySelector('#pixelGrid');
 }
 
 //nth child
 const bucketFill = (row, col, oldColor, docFrag)=>{
-    //console.log(`row:${row}, col${col}`);
     if(row < 0 || col < 0 || row >= height || col >= width){
         return;
     }
@@ -231,17 +178,13 @@ const bucketFill = (row, col, oldColor, docFrag)=>{
 }
 
 let colorSaver = document.querySelector('#colorSaver');
-/*colorSavers.forEach((colorSaver)=>{
-
-});*/
 colorSaver.addEventListener('click', (evt)=>{
     if(activeTool === 'dropper'){
-        console.log(evt.target.style.backgroundColor)
         selectedColor = evt.target.style.backgroundColor;
         colorSelector.value = rgbToHex(evt.target.style.backgroundColor);
         activeTool = 'paintbrush';
     }else if(activeTool === 'eraser'){
-        evt.target.style.backgroundColor = 'rgb(255, 255, 255)';
+        evt.target.style.backgroundColor = canvasColor;
     }
     else{
         evt.target.style.backgroundColor = selectedColor;
@@ -250,5 +193,3 @@ colorSaver.addEventListener('click', (evt)=>{
 
 //initialize canvas grid
 initGrid(width,height);
-
-//hello
